@@ -1,0 +1,3 @@
+[submodule "vendor/kirby"]
+	path = vendor/kirby
+	url = https://github.com/Kosoku/Kirby.git
