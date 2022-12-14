@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import com.getsporttrade.assignment.BR
 import com.getsporttrade.assignment.R
+import com.getsporttrade.assignment.extension.showSnackbar
 import com.getsporttrade.assignment.service.cache.entity.Position
 import com.getsporttrade.assignment.ui.BaseFragment
 import com.getsporttrade.assignment.ui.viewmodel.PositionDetailsViewModel
+import com.getsporttrade.assignment.ui.viewmodel.PositionDetailsViewModel.Companion.POSITION_IDENTIFIER_KEY
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -24,15 +27,46 @@ class PositionDetailsFragment : BaseFragment() {
      */
     override val viewModel: PositionDetailsViewModel by viewModels()
 
+    /**
+     * The position identifier string fragment argument which will be used to fetch associated position [Position] data
+     */
+    private var positionId: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        positionId = arguments?.getString(POSITION_IDENTIFIER_KEY, "")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_position_details, container, false)
-
+        binding?.apply {
+            setVariable(BR.model, viewModel)
+            lifecycleOwner = viewLifecycleOwner
+        }
         return binding?.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        positionId?.let { viewModel.fetchPosition(id = it) }
+        viewModel.positionResult.observe(viewLifecycleOwner, ::onPositionChanged)
+    }
+
+    /**
+     * Observes position live data value change, when fails will show error message snackbar
+     *
+     * @param result position data wrapped in result [Result] helper
+     */
+    private fun onPositionChanged(result: Result<Position>?) =
+        result?.let {
+            it.onFailure {
+                showSnackbar(it.message.orEmpty(), requireView())
+            }
+        }
 
     companion object {
         /**

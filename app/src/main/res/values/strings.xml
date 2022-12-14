@@ -3,4 +3,9 @@
 
     <!-- Position List -->
     <string name="position_list_screen_title">Positions</string>
+    <string name="position_name_label">Name:</string>
+    <string name="position_criteria_name_label">Criteria name:</string>
+    <string name="position_story_name_label">Story name:</string>
+    <string name="position_price_label">Price:</string>
+    <string name="position_quantity_label">Quantity:</string>
 </resources>
