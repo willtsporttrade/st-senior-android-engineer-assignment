@@ -16,7 +16,8 @@ import com.getsporttrade.assignment.service.cache.entity.Position
 class PositionListAdapter(private val onItemClick: (Position) -> Unit) :
     ListAdapter<Position, PositionViewHolder>(object :
         DiffUtil.ItemCallback<Position>() {
-        override fun areItemsTheSame(oldItem: Position, newItem: Position) = (oldItem.identifier == newItem.identifier)
+        override fun areItemsTheSame(oldItem: Position, newItem: Position) =
+            (oldItem.identifier == newItem.identifier)
 
         override fun areContentsTheSame(oldItem: Position, newItem: Position) =
             oldItem.equals(newItem)
