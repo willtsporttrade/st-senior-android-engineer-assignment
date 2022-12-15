@@ -9,18 +9,35 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.getsporttrade.assignment.MainActivity
 import com.getsporttrade.assignment.R
+import com.getsporttrade.assignment.repository.PositionRepository
 import com.getsporttrade.assignment.ui.widget.PositionViewHolder
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.*
+import org.junit.Before
 
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class PositionDetailScreenEspressoTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @get:Rule
+    var hiltRule = HiltAndroidRule(this)
+
+    @Inject
+    lateinit var positionRepo: PositionRepository
+
+    @Before
+    fun setUp() {
+        hiltRule.inject()
+    }
 
     @Test
     fun veifyPositionLabesAreDisplaying() {
