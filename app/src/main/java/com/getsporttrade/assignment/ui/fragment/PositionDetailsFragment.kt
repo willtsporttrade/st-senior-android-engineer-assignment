@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import com.getsporttrade.assignment.BR
 import com.getsporttrade.assignment.R
+import com.getsporttrade.assignment.extension.showSnackbar
 import com.getsporttrade.assignment.service.cache.entity.Position
 import com.getsporttrade.assignment.ui.BaseFragment
 import com.getsporttrade.assignment.ui.viewmodel.PositionDetailsViewModel
@@ -30,9 +32,29 @@ class PositionDetailsFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_position_details, container, false)
-
+        binding?.apply {
+            setVariable(BR.model, viewModel)
+            lifecycleOwner = viewLifecycleOwner
+        }
         return binding?.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.positionResult.observe(viewLifecycleOwner, ::onPositionChanged)
+    }
+
+    /**
+     * Observes position live data value change, when fails will show error message snackbar
+     *
+     * @param result position data wrapped in result [Result] helper
+     */
+    private fun onPositionChanged(result: Result<Position>?) =
+        result?.let {
+            it.onFailure {
+                showSnackbar(it.message.orEmpty(), requireView())
+            }
+        }
 
     companion object {
         /**

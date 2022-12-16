@@ -9,3 +9,7 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    mockk_version = '1.13.3'
+}

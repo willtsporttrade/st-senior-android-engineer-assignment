@@ -3,12 +3,14 @@ package com.getsporttrade.assignment.service.cache.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.RoomMasterTable.TABLE_NAME
 import com.getsporttrade.assignment.extension.stubPrice
 import com.getsporttrade.assignment.extension.stubQuantity
 import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
 import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.*
 import kotlin.random.Random.Default.nextBoolean
 
 /**
@@ -124,4 +126,12 @@ data class Position(
             }
         }
     }
+
+    // Format price value as currency (US dollars)
+    val formattedPrice: String
+        get() = NumberFormat.getCurrencyInstance(Locale.US).format(price)
+
+    // Format quantity value as decimal with 4 significant digits
+    val formattedQty: String
+        get() = DecimalFormat("0.0000").format(quantity)
 }
