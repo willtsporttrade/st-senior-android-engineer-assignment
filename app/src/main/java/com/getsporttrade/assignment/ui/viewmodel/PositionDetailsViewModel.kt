@@ -9,6 +9,7 @@ import com.getsporttrade.assignment.service.cache.entity.Position
 import com.getsporttrade.assignment.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -37,7 +38,14 @@ class PositionDetailsViewModel @Inject constructor(
      * The position live data which position detail fragment view (xml layout) system will use to
      * update once observed position result value changes
      */
-    val position: LiveData<Position?>
+    val position: LiveData<Position?> = Transformations.map(positionResult) {
+        when {
+            it.isSuccess -> it.getOrNull()
+            else -> null
+        }
+    }
+
+    private lateinit var disposable: Disposable
 
     companion object {
         /**
@@ -52,11 +60,9 @@ class PositionDetailsViewModel @Inject constructor(
      */
     init {
         positionIdentifier = savedStateHandle[POSITION_IDENTIFIER_KEY]
-        position = Transformations.map(positionResult) {
-            when {
-                it.isSuccess -> it.getOrNull()
-                else -> null
-            }
+        positionIdentifier?.let {
+            disposable = observePosition(id = it)
+            disposables.add(disposable)
         }
     }
 
@@ -67,14 +73,12 @@ class PositionDetailsViewModel @Inject constructor(
      * @param id target position [Position] identifier
      * @throws Throwable when subscriber receives error [Throwable]
      */
-    fun fetchPosition(id: String) {
-        positionRepository.observePosition(id)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                _positionResult.value = Result.success(it)
-            }, {
-                _positionResult.value = Result.failure(it)
-            })
-    }
+    private fun observePosition(id: String) = positionRepository.observePosition(identifier = id)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({
+            _positionResult.value = Result.success(it)
+        }, {
+            _positionResult.value = Result.failure(it)
+        })
 }

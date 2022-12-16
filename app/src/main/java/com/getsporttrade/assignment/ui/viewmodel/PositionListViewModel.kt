@@ -7,6 +7,7 @@ import com.getsporttrade.assignment.service.cache.entity.Position
 import com.getsporttrade.assignment.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -29,9 +30,11 @@ class PositionListViewModel @Inject constructor(
      * live data value changes
      */
     val positions: LiveData<Result<List<Position>>> = _positions
+    private val disposable: Disposable
 
     init {
-        observePositions()
+        disposable = observePositions()
+        disposables.add(disposable)
     }
 
     /**
@@ -39,14 +42,12 @@ class PositionListViewModel @Inject constructor(
      *
      * @throws Throwable subscription error
      */
-    private fun observePositions() {
-        positionRepository.observePositions()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                _positions.value = Result.success(it)
-            }, {
-                _positions.value = Result.failure(it)
-            })
-    }
+    private fun observePositions() = positionRepository.observePositions()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({
+            _positions.value = Result.success(it)
+        }, {
+            _positions.value = Result.failure(it)
+        })
 }

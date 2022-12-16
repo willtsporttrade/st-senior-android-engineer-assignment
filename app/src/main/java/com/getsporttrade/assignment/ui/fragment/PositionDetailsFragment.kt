@@ -13,7 +13,6 @@ import com.getsporttrade.assignment.extension.showSnackbar
 import com.getsporttrade.assignment.service.cache.entity.Position
 import com.getsporttrade.assignment.ui.BaseFragment
 import com.getsporttrade.assignment.ui.viewmodel.PositionDetailsViewModel
-import com.getsporttrade.assignment.ui.viewmodel.PositionDetailsViewModel.Companion.POSITION_IDENTIFIER_KEY
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -26,16 +25,6 @@ class PositionDetailsFragment : BaseFragment() {
      * The [BaseViewModel] subclass for position details
      */
     override val viewModel: PositionDetailsViewModel by viewModels()
-
-    /**
-     * The position identifier string fragment argument which will be used to fetch associated position [Position] data
-     */
-    private var positionId: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        positionId = arguments?.getString(POSITION_IDENTIFIER_KEY, "")
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +41,6 @@ class PositionDetailsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        positionId?.let { viewModel.fetchPosition(id = it) }
         viewModel.positionResult.observe(viewLifecycleOwner, ::onPositionChanged)
     }
 

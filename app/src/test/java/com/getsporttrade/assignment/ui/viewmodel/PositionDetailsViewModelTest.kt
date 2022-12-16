@@ -45,7 +45,6 @@ class PositionDetailsViewModelTest : BaseTest() {
             savedStateHandle = savedStateHandle,
             positionRepository = positionRepo
         )
-        viewModel.fetchPosition(positionId)
     }
 
     @Test
