@@ -9,7 +9,6 @@ import com.getsporttrade.assignment.service.cache.entity.Position
 import com.getsporttrade.assignment.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -45,8 +44,6 @@ class PositionDetailsViewModel @Inject constructor(
         }
     }
 
-    private lateinit var disposable: Disposable
-
     companion object {
         /**
          * Key representing the position identifier in the fragment bundle
@@ -61,7 +58,7 @@ class PositionDetailsViewModel @Inject constructor(
     init {
         positionIdentifier = savedStateHandle[POSITION_IDENTIFIER_KEY]
         positionIdentifier?.let {
-            disposable = observePosition(id = it)
+            val disposable = observePosition(id = it)
             disposables.add(disposable)
         }
     }

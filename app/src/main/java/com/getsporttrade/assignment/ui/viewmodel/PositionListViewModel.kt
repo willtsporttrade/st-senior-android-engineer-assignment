@@ -7,7 +7,6 @@ import com.getsporttrade.assignment.service.cache.entity.Position
 import com.getsporttrade.assignment.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -30,10 +29,9 @@ class PositionListViewModel @Inject constructor(
      * live data value changes
      */
     val positions: LiveData<Result<List<Position>>> = _positions
-    private val disposable: Disposable
 
     init {
-        disposable = observePositions()
+        val disposable = observePositions()
         disposables.add(disposable)
     }
 
